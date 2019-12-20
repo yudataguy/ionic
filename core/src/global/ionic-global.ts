@@ -1,4 +1,5 @@
-import { getMode, setMode } from '@stencil/core';
+// @ts-ignore
+import { forceModeUpdate, getMode, setMode } from '@stencil/core';
 
 import { Mode } from '../interface';
 import { isPlatform, setupPlatforms } from '../utils/platform';
@@ -11,6 +12,30 @@ let defaultMode: Mode;
 
 export const getIonMode = (ref?: any): Mode => {
   return (ref && getMode(ref)) || defaultMode;
+};
+
+export const setAppMode = (mode: Mode) => {
+  document.documentElement.classList.remove(defaultMode);
+
+  defaultMode = mode;
+
+  document.documentElement.setAttribute('mode', mode);
+  document.documentElement.classList.add(mode);
+
+  const walk = (elm: Element) => {
+    if (elm.nodeName.startsWith('ion-')) {
+      forceModeUpdate(elm);
+    }
+    if (elm.shadowRoot && elm.shadowRoot.nodeType === 11 && elm.shadowRoot !== (elm as any)) {
+      walk(elm.shadowRoot as any);
+    }
+    if (elm.children) {
+      for (let i = 0; i < elm.children.length; i++) {
+        walk(elm.children[i]);
+      }
+    }
+  };
+  walk(document.body);
 };
 
 export default () => {

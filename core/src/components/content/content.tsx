@@ -24,7 +24,6 @@ export class Content implements ComponentInterface {
   private cTop = -1;
   private cBottom = -1;
   private scrollEl!: HTMLElement;
-  private mode = getIonMode(this);
 
   // Detail is used in a hot loop in the scroll event, by allocating it here
   // V8 will be able to inline any read/write to it since it's a monomorphic class.
@@ -120,9 +119,9 @@ export class Content implements ComponentInterface {
   }
 
   private shouldForceOverscroll() {
-    const { forceOverscroll, mode } = this;
+    const { forceOverscroll } = this;
     return forceOverscroll === undefined
-      ? mode === 'ios' && isPlatform('ios')
+      ? getIonMode(this) === 'ios' && isPlatform('ios')
       : forceOverscroll;
   }
 

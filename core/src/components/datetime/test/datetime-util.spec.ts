@@ -1,4 +1,4 @@
-import { convertDataToISO, parseDate } from './datetime-util';
+import { convertDataToISO, parseDate } from '../datetime-util';
 
 describe('datetime-util', () => {
   describe('convertDataToISO', () => {

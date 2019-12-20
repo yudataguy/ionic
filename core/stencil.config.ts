@@ -78,9 +78,9 @@ export const config: Config = {
       esmLoaderPath: '../loader'
     },
     // {
-    //   type: 'experimental-dist-module',
-    //   externalRuntime: true,
-    // },
+    //   type: 'dist-custom-elements-bundle',
+    //   dir: 'web-components'
+    // }
     {
       type: 'docs-readme',
       strict: true

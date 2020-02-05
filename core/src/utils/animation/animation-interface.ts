@@ -88,6 +88,11 @@ export interface Animation {
   delay(delay: number | undefined): Animation;
 
   /**
+   * Sets the end delay of an animation (in milliseconds).
+   */
+  endDelay(delay: number | undefined): Animation;
+
+  /**
    * Get an array of keyframes for the animation.
    */
   getKeyframes(): AnimationKeyFrames;
@@ -106,6 +111,11 @@ export interface Animation {
    * Gets the animation's delay in milliseconds.
    */
   getDelay(): number;
+
+  /**
+   * Gets the animation's end delay in milliseconds.
+   */
+  getEndDelay(): number;
 
   /**
    * Gets the number of iterations the animation will run.

@@ -26,6 +26,7 @@ interface AnimationInternal extends Animation {
 
 export const createAnimation = (animationId?: string): Animation => {
   let _delay: number | undefined;
+  let _endDelay: number | undefined;
   let _duration: number | undefined;
   let _easing: string | undefined;
   let _iterations: number | undefined;
@@ -296,6 +297,13 @@ export const createAnimation = (animationId?: string): Animation => {
     return 0;
   };
 
+  const getEndDelay = () => {
+    if (_endDelay !== undefined) { return _endDelay; }
+    if (parentAnimation) { return parentAnimation.getEndDelay(); }
+
+    return 0;
+  };
+
   const getKeyframes = () => {
     return _keyframes;
   };
@@ -318,6 +326,14 @@ export const createAnimation = (animationId?: string): Animation => {
 
   const delay = (animationDelay: number) => {
     _delay = animationDelay;
+
+    update(true);
+
+    return ani;
+  };
+
+  const endDelay = (animationEndDelay: number) => {
+    _endDelay = animationEndDelay;
 
     update(true);
 
@@ -531,6 +547,7 @@ export const createAnimation = (animationId?: string): Animation => {
       const animation = element.animate(_keyframes, {
         id,
         delay: getDelay(),
+        endDelay: getEndDelay(),
         duration: getDuration(),
         easing: getEasing(),
         iterations: getIterations(),
@@ -589,6 +606,7 @@ export const createAnimation = (animationId?: string): Animation => {
     webAnimations.forEach(animation => {
       animation.effect.updateTiming({
         delay: getDelay(),
+        endDelay: getEndDelay(),
         duration: getDuration(),
         easing: getEasing(),
         iterations: getIterations(),
@@ -784,33 +802,41 @@ export const createAnimation = (animationId?: string): Animation => {
        * accounts for this, but using raw CSS Animations requires
        * this workaround.
        */
-       const animationDelay = getDelay() || 0;
-       const animationDuration = getDuration() || 0;
-       const animationIterations = getIterations() || 1;
+       const endDelay = getEndDelay();
+       const animationDelay = getDelay();
+       const animationDuration = getDuration();
+       const animationIterations = getIterations();
 
        // No need to set a timeout when animation has infinite iterations
        if (isFinite(animationIterations)) {
-        cssAnimationsTimerFallback = setTimeout(onAnimationEndFallback, animationDelay + (animationDuration * animationIterations) + ANIMATION_END_FALLBACK_PADDING_MS);
+        cssAnimationsTimerFallback = setTimeout(onAnimationEndFallback, animationDelay + (animationDuration * animationIterations) + endDelay + ANIMATION_END_FALLBACK_PADDING_MS);
        }
 
        animationEnd(elements[0], () => {
-        clearCSSAnimationsTimeout();
+        const cleanUpAnimation = () => {
+          clearCSSAnimationsTimeout();
 
-        /**
-         * Ensure that clean up
-         * is always done a frame
-         * before the onFinish handlers
-         * are fired. Otherwise, there
-         * may be flickering if a new
-         * animation is started on the same
-         * element too quickly
-         *
-         * TODO: Is there a cleaner way to do this?
-         */
-        raf(() => {
-          clearCSSAnimationPlayState();
-          raf(animationFinish);
-        });
+          /**
+           * Ensure that clean up
+           * is always done a frame
+           * before the onFinish handlers
+           * are fired. Otherwise, there
+           * may be flickering if a new
+           * animation is started on the same
+           * element too quickly
+           *
+           * TODO: Is there a cleaner way to do this?
+           */
+          raf(() => {
+            clearCSSAnimationPlayState();
+            raf(animationFinish);
+          });
+        };
+        if (endDelay > 0) {
+          setTimeout(() => cleanUpAnimation(), endDelay);
+        } else {
+          cleanUpAnimation();
+        }
       });
     }
   };
@@ -945,11 +971,13 @@ export const createAnimation = (animationId?: string): Animation => {
     duration,
     easing,
     delay,
+    endDelay,
     getWebAnimations,
     getKeyframes,
     getFill,
     getDirection,
     getDelay,
+    getEndDelay,
     getIterations,
     getEasing,
     getDuration,

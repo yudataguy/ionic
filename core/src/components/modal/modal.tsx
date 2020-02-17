@@ -1,9 +1,9 @@
 import { Component, ComponentInterface, Element, Event, EventEmitter, Host, Method, Prop, h } from '@stencil/core';
 
-import { StatusBar, StatusBarStyle } from '../../utils/native/status-bar';
 import { getIonMode } from '../../global/ionic-global';
 import { Animation, AnimationBuilder, ComponentProps, ComponentRef, FrameworkDelegate, Gesture, OverlayEventDetail, OverlayInterface } from '../../interface';
 import { attachComponent, detachComponent } from '../../utils/framework-delegate';
+import { StatusBar, StatusBarStyle } from '../../utils/native/status-bar';
 import { BACKDROP, activeAnimations, dismiss, eventMethod, prepareOverlay, present } from '../../utils/overlays';
 import { getClassMap } from '../../utils/theme';
 import { deepReady } from '../../utils/transition';
@@ -33,6 +33,8 @@ export class Modal implements ComponentInterface, OverlayInterface {
 
   // Whether or not modal is being dismissed via gesture
   private gestureAnimationDismissing = false;
+
+  private previousStatusBarStyle: StatusBarStyle = StatusBarStyle.Light;
   presented = false;
   animation?: Animation;
   mode = getIonMode(this);
@@ -146,13 +148,12 @@ export class Modal implements ComponentInterface, OverlayInterface {
     await deepReady(this.usersElement);
 
     const presentingEl = this.presentingElement;
-    let previousStatusBarStyle;
     if (presentingEl !== undefined) {
       const hasPresentingCardModal = presentingEl && presentingEl.tagName === 'ION-MODAL' && (presentingEl as HTMLIonModalElement).presentingElement !== undefined;
       if (!hasPresentingCardModal && StatusBar.available()) {
         StatusBar.setStyle(StatusBarStyle.Dark);
         const { style } = await StatusBar.getInfo();
-        previousStatusBarStyle = style;
+        this.previousStatusBarStyle = style;
       }
     }
 
@@ -167,7 +168,7 @@ export class Modal implements ComponentInterface, OverlayInterface {
       this.gesture = createSwipeToCloseGesture(
         this.el,
         presentingEl,
-        previousStatusBarStyle,
+        this.previousStatusBarStyle,
         ani,
         () => {
           /**
@@ -207,7 +208,7 @@ export class Modal implements ComponentInterface, OverlayInterface {
     if (presentingEl !== undefined) {
       const hasPresentingCardModal = presentingEl && presentingEl.tagName === 'ION-MODAL' && (presentingEl as HTMLIonModalElement).presentingElement !== undefined;
       if (!hasPresentingCardModal) {
-        StatusBar.setStyle(StatusBarStyle.Light);
+        StatusBar.setStyle(this.previousStatusBarStyle);
       }
     }
 

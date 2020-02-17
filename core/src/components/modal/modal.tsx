@@ -1,5 +1,6 @@
 import { Component, ComponentInterface, Element, Event, EventEmitter, Host, Method, Prop, h } from '@stencil/core';
 
+import { StatusBar, StatusBarStyle } from '../../utils/native/status-bar';
 import { getIonMode } from '../../global/ionic-global';
 import { Animation, AnimationBuilder, ComponentProps, ComponentRef, FrameworkDelegate, Gesture, OverlayEventDetail, OverlayInterface } from '../../interface';
 import { attachComponent, detachComponent } from '../../utils/framework-delegate';
@@ -143,16 +144,30 @@ export class Modal implements ComponentInterface, OverlayInterface {
     };
     this.usersElement = await attachComponent(this.delegate, container, this.component, ['ion-page'], componentProps);
     await deepReady(this.usersElement);
-    await present(this, 'modalEnter', iosEnterAnimation, mdEnterAnimation, this.presentingElement);
+
+    const presentingEl = this.presentingElement;
+    let previousStatusBarStyle;
+    if (presentingEl !== undefined) {
+      const hasPresentingCardModal = presentingEl && presentingEl.tagName === 'ION-MODAL' && (presentingEl as HTMLIonModalElement).presentingElement !== undefined;
+      if (!hasPresentingCardModal && StatusBar.available()) {
+        StatusBar.setStyle(StatusBarStyle.Dark);
+        const { style } = await StatusBar.getInfo();
+        previousStatusBarStyle = style;
+      }
+    }
+
+    await present(this, 'modalEnter', iosEnterAnimation, mdEnterAnimation, presentingEl);
 
     const mode = getIonMode(this);
     if (this.swipeToClose && mode === 'ios') {
       // All of the elements needed for the swipe gesture
       // should be in the DOM and referenced by now, except
       // for the presenting el
-      const ani = this.animation = iosLeaveAnimation(this.el, this.presentingElement);
+      const ani = this.animation = iosLeaveAnimation(this.el, presentingEl);
       this.gesture = createSwipeToCloseGesture(
         this.el,
+        presentingEl,
+        previousStatusBarStyle,
         ani,
         () => {
           /**
@@ -188,9 +203,17 @@ export class Modal implements ComponentInterface, OverlayInterface {
       return false;
     }
 
+    const presentingEl = this.presentingElement;
+    if (presentingEl !== undefined) {
+      const hasPresentingCardModal = presentingEl && presentingEl.tagName === 'ION-MODAL' && (presentingEl as HTMLIonModalElement).presentingElement !== undefined;
+      if (!hasPresentingCardModal) {
+        StatusBar.setStyle(StatusBarStyle.Light);
+      }
+    }
+
     const iosAni = (this.animation === undefined || (role === BACKDROP || role === undefined)) ? iosLeaveAnimation : undefined;
     const enteringAnimation = activeAnimations.get(this) || [];
-    const dismissed = await dismiss(this, data, role, 'modalLeave', iosAni, mdLeaveAnimation, this.presentingElement);
+    const dismissed = await dismiss(this, data, role, 'modalLeave', iosAni, mdLeaveAnimation, presentingEl);
 
     if (dismissed) {
       await detachComponent(this.delegate, this.usersElement);

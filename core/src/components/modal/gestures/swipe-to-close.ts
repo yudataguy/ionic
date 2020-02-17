@@ -2,6 +2,7 @@ import { Animation } from '../../../interface';
 import { getTimeGivenProgression } from '../../../utils/animation/cubic-bezier';
 import { GestureDetail, createGesture } from '../../../utils/gesture';
 import { clamp } from '../../../utils/helpers';
+import { StatusBar, StatusBarStyle } from '../../../utils/native/status-bar';
 
 // Defaults for the card swipe animation
 export const SwipeToCloseDefaults = {
@@ -10,11 +11,14 @@ export const SwipeToCloseDefaults = {
 
 export const createSwipeToCloseGesture = (
   el: HTMLIonModalElement,
+  presentingEl: HTMLElement | undefined,
+  previousStatusBarStyle: StatusBarStyle = StatusBarStyle.Light,
   animation: Animation,
   onDismiss: () => void
 ) => {
   const height = el.offsetHeight;
   let isOpen = false;
+  let statusBarStyle: StatusBarStyle | undefined;
 
   const canStart = (detail: GestureDetail) => {
     const target = detail.event.target as HTMLElement | null;
@@ -41,6 +45,18 @@ export const createSwipeToCloseGesture = (
   const onMove = (detail: GestureDetail) => {
     const step = detail.deltaY / height;
     if (step < 0) { return; }
+
+    // Do not mess with statusbar if there is another card modal waiting behind it
+    const hasPresentingCardModal = presentingEl && presentingEl.tagName === 'ION-MODAL' && (presentingEl as HTMLIonModalElement).presentingElement !== undefined;
+    if (StatusBar.available() && !hasPresentingCardModal) {
+      if (step < 0.57 && statusBarStyle !== StatusBarStyle.Dark) {
+        StatusBar.setStyle(StatusBarStyle.Dark);
+        statusBarStyle = StatusBarStyle.Dark;
+      } else if (step >= 0.57 && statusBarStyle !== previousStatusBarStyle) {
+        StatusBar.setStyle(previousStatusBarStyle);
+        statusBarStyle = previousStatusBarStyle;
+      }
+    }
 
     animation.progressStep(step);
   };

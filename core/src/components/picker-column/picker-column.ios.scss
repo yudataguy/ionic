@@ -6,58 +6,25 @@
 
 .picker-col {
   @include padding($picker-ios-column-padding-top, $picker-ios-column-padding-end, $picker-ios-column-padding-bottom, $picker-ios-column-padding-start);
-
-  transform-style: preserve-3d;
 }
 
 .picker-prefix,
 .picker-suffix,
 .picker-opts {
-  overflow-y: auto;
-
-  scroll-snap-type: y proximity;
-
-  transform-style: preserve-3d;
-
-  color: inherit;
-
   font-size: $picker-ios-option-font-size;
 
   line-height: $picker-ios-option-height;
 }
 
-.picker-opts::-webkit-scrollbar {
-  display: none;
-}
-
-.picker-opt.picker-opt-liam {
-  scroll-snap-align: none !important;
-
-  pointer-events: none;
-
-  width: 100%;
-  height: 85px;
-}
-
 .picker-opt {
   @include padding($picker-ios-option-padding-top, $picker-ios-option-padding-end, $picker-ios-option-padding-bottom, $picker-ios-option-padding-start);
-  @include margin(0);
   @include transform-origin(center, center);
-
-  scroll-snap-align: center;
 
   height: 46px;
 
   transform-style: preserve-3d;
 
-  transition-timing-function: ease-out;
-
-  background: transparent;
-  color: inherit;
-
   font-size: $picker-ios-option-font-size;
 
   line-height: $picker-ios-option-height;
-  backface-visibility: hidden;
-  pointer-events: auto;
 }

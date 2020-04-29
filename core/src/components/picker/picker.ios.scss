@@ -58,13 +58,11 @@
 
 .picker-above-highlight {
   @include position(0, null, null, 0);
-  @include transform(translate3d(0, 0, 90px));
-
   display: block;
   position: absolute;
 
   width: 100%;
-  height: $picker-ios-option-offset-y + 4px;
+  height: 88px;
 
   border-bottom: 1px solid var(--border-color);
 
@@ -77,14 +75,13 @@
 }
 
 .picker-below-highlight {
-  @include position($picker-ios-option-offset-y + $picker-ios-option-height - 4, null, null, 0);
-  @include transform(translate3d(0, 0, 90px));
+  @include position(null, null, 0, 0);
 
   display: block;
   position: absolute;
 
   width: 100%;
-  height: $picker-ios-option-offset-y + $picker-ios-option-height;
+  height: 88px;
 
   border-top: 1px solid var(--border-color);
 

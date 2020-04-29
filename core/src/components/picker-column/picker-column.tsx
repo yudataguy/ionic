@@ -70,7 +70,7 @@ export class PickerColumnCmp implements ComponentInterface {
       onMove: ev => this.onMove(ev),
       onEnd: ev => this.onEnd(ev),
     });
-    this.gesture.enable();
+    //this.gesture.enable();
     this.tmrId = setTimeout(() => {
       this.noAnimate = false;
       this.refresh(true);
@@ -86,6 +86,7 @@ export class PickerColumnCmp implements ComponentInterface {
     }
 
     this.refresh();
+
   }
 
   disconnectedCallback() {
@@ -140,7 +141,7 @@ export class PickerColumnCmp implements ComponentInterface {
         if (Math.abs(rotateX) <= 90) {
           translateY = 0;
           translateZ = 90;
-          transform = `rotateX(${rotateX}deg) `;
+          //transform = `rotateX(${rotateX}deg) `;
         } else {
           translateY = -9999;
         }
@@ -151,7 +152,6 @@ export class PickerColumnCmp implements ComponentInterface {
       }
 
       const selected = selectedIndex === i;
-      transform += `translate3d(0px,${translateY}px,${translateZ}px) `;
       if (this.scaleFactor !== 1 && !selected) {
         transform += scaleStr;
       }
@@ -383,6 +383,7 @@ export class PickerColumnCmp implements ComponentInterface {
           style={{ maxWidth: col.optionsWidth! }}
           ref={el => this.optsEl = el}
         >
+          <div class="picker-opt picker-opt-liam"></div>
           { col.options.map((o, index) =>
             <Button
               type="button"
@@ -392,6 +393,7 @@ export class PickerColumnCmp implements ComponentInterface {
               {o.text}
             </Button>
           )}
+          <div class="picker-opt picker-opt-liam"></div>
         </div>
         {col.suffix && (
           <div class="picker-suffix" style={{ width: col.suffixWidth! }}>

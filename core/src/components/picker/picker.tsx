@@ -130,7 +130,8 @@ export class Picker implements ComponentInterface, OverlayInterface {
     if (this.durationTimeout) {
       clearTimeout(this.durationTimeout);
     }
-    return dismiss(this, data, role, 'pickerLeave', iosLeaveAnimation, iosLeaveAnimation);
+    return Promise.resolve(true);
+    //return dismiss(this, data, role, 'pickerLeave', iosLeaveAnimation, iosLeaveAnimation);
   }
 
   /**

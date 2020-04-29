@@ -24,12 +24,8 @@
   max-width: 100%;
 }
 
-// contain property is supported by Chrome
 .picker-opt {
-  @include position(0, null, null, 0);
-
   display: block;
-  position: absolute;
 
   width: 100%;
 

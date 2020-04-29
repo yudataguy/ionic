@@ -13,7 +13,9 @@
 .picker-prefix,
 .picker-suffix,
 .picker-opts {
-  top: $picker-ios-option-offset-y;
+  overflow-y: auto;
+
+  scroll-snap-type: y proximity;
 
   transform-style: preserve-3d;
 
@@ -22,13 +24,27 @@
   font-size: $picker-ios-option-font-size;
 
   line-height: $picker-ios-option-height;
+}
+
+.picker-opts::-webkit-scrollbar {
+  display: none;
+}
+
+.picker-opt.picker-opt-liam {
+  scroll-snap-align: none !important;
+
   pointer-events: none;
+
+  width: 100%;
+  height: 85px;
 }
 
 .picker-opt {
   @include padding($picker-ios-option-padding-top, $picker-ios-option-padding-end, $picker-ios-option-padding-bottom, $picker-ios-option-padding-start);
   @include margin(0);
   @include transform-origin(center, center);
+
+  scroll-snap-align: center;
 
   height: 46px;
 

@@ -17,7 +17,7 @@ import { iosLeaveAnimation } from './animations/ios.leave';
     ios: 'picker.ios.scss',
     md: 'picker.md.scss'
   },
-  scoped: true
+  shadow: true
 })
 export class Picker implements ComponentInterface, OverlayInterface {
   private durationTimeout: any;
@@ -130,8 +130,7 @@ export class Picker implements ComponentInterface, OverlayInterface {
     if (this.durationTimeout) {
       clearTimeout(this.durationTimeout);
     }
-    return Promise.resolve(true);
-    //return dismiss(this, data, role, 'pickerLeave', iosLeaveAnimation, iosLeaveAnimation);
+    return dismiss(this, data, role, 'pickerLeave', iosLeaveAnimation, iosLeaveAnimation);
   }
 
   /**

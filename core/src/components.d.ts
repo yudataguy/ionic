@@ -1544,9 +1544,6 @@ export namespace Components {
         "showBackdrop": boolean;
     }
     interface IonPickerColumn {
-        /**
-          * Picker column data
-         */
         "col": PickerColumn;
     }
     interface IonPopover {
@@ -4698,9 +4695,6 @@ declare namespace LocalJSX {
         "showBackdrop"?: boolean;
     }
     interface IonPickerColumn {
-        /**
-          * Picker column data
-         */
         "col": PickerColumn;
     }
     interface IonPopover {

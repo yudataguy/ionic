@@ -127,3 +127,11 @@
   display: none;
   pointer-events: none;
 }
+
+ion-picker-column:first-of-type .picker-opts-sizing {
+  @include margin(null, null, null, auto);
+}
+
+ion-picker-column:last-of-type .picker-opts-sizing {
+  @include margin(null, auto, null, null);
+}

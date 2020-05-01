@@ -32,17 +32,29 @@ export class PickerColumnCmp implements ComponentInterface {
     const { col, optsEl, scrollEl } = this;
     if (!scrollEl || !optsEl || !col || col.selectedIndex === undefined) { return; }
 
-    const optElHeight = optsEl.querySelector('.picker-opt')!.clientHeight;
+    setTimeout(() => {
+      const colBBox = this.el.getBoundingClientRect();
+      const root = this.el.getRootNode() as any;
 
-    // temp ideally I can use elementFromPoint instead of doing all this math
-    // need to select the center point and filter for the picker-opt
-    scrollEl.addEventListener('scroll', () => {
-      const scrollTop = scrollEl.scrollTop;
-      const selectedIndex = Math.ceil(scrollTop / optElHeight);
-      const selectedElement = this.getElementByIndex(selectedIndex);
-      if (!selectedElement) { return; }
-      this.selectOption(selectedElement);
-    });
+      const alignRight = this.el.classList.contains('picker-opts-right');
+      const alignLeft = this.el.classList.contains('picker-opts-left');
+
+      const y = colBBox.y + (colBBox.height / 2);
+      let x = 0;
+      if (alignRight) {
+        x = colBBox.x + (colBBox.width - 15);
+      } else if (alignLeft) {
+        x = colBBox.x + 15;
+      } else {
+        x = colBBox.x + (colBBox.width / 2);
+      }
+
+      scrollEl.addEventListener('scroll', () => {
+        const selectedElement = root.elementFromPoint(x, y);
+        if (!selectedElement || !selectedElement.classList.contains('picker-opt')) { return; }
+        this.selectOption(selectedElement);
+      });
+    }, 500);
     this.onOptionSelected(col.selectedIndex, false);
   }
 

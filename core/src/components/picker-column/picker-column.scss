@@ -2,7 +2,6 @@
 
 // Picker Column
 // --------------------------------------------------
-
 .picker-col {
   display: flex;
   position: relative;
@@ -16,6 +15,8 @@
   contain: content;
 
   transform-style: preserve-3d;
+
+  pointer-events: none;
 }
 
 .picker-opts {
@@ -24,6 +25,8 @@
   flex: 1;
 
   max-width: 100%;
+
+  pointer-events: none;
 }
 
 .picker-opts::-webkit-scrollbar {

@@ -6,6 +6,12 @@
 
 .picker-col {
   @include padding($picker-md-column-padding-top, $picker-md-column-padding-end, $picker-md-column-padding-bottom, $picker-md-column-padding-start);
+
+  pointer-events: none;
+}
+
+.picker-opts {
+  pointer-events: none;
 }
 
 .picker-prefix,
